@@ -39,7 +39,20 @@ app.get('/articles', async (req, res) => {
     }
 
 });
-const port = process.env.PORT || 3000
+app.get("/search", async (req, res) => {
+    try {
+        const query = req.query.query;
+        if (query) {
+            const data = await axios.get(`https://newsapi.org/v2/everything?q=${query}&pageSize=20&apiKey=${key}`)
+            res.status(200).json({ articles: data.data.articles });
+        } else {
+            res.status(500).json({ error: "query not provided" })
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+const port = process.env.PORT || 8080
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
